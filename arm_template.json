@@ -1,0 +1,136 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory Name",
+            "defaultValue": "ADFv2DemoTranslate"
+        },
+        "BatchStorageLinkedService_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'BatchStorageLinkedService'"
+        },
+        "AzureBatchLinkedService_accessKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accessKey' of 'AzureBatchLinkedService'"
+        },
+        "AzureBlobStorageLinkedService_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('factoryName'), '/TranslateDocuments')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2017-09-01-preview",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "CustomTranslateDocs",
+                        "type": "Custom",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 60,
+                            "secureOutput": false
+                        },
+                        "typeProperties": {
+                            "command": "ADFConsole.exe",
+                            "resourceLinkedService": {
+                                "referenceName": "BatchStorageLinkedService",
+                                "type": "LinkedServiceReference"
+                            },
+                            "folderPath": "customactivity/TranslateDocuments",
+                            "extendedProperties": {
+                                "OutputFolder": "translated",
+                                "InputContainer": "incoming",
+                                "TranslateServiceKey": Add your cognitive services key here for Translator Text API
+                            },
+                            "referenceObjects": {
+                                "linkedServices": [
+                                    {
+                                        "referenceName": "BatchStorageLinkedService",
+                                        "type": "LinkedServiceReference"
+                                    },
+                                    {
+                                        "referenceName": "AzureBatchLinkedService",
+                                        "type": "LinkedServiceReference"
+                                    }
+                                ],
+                                "datasets": []
+                            }
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "AzureBatchLinkedService",
+                            "type": "LinkedServiceReference"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/BatchStorageLinkedService')]",
+                "[concat(variables('factoryId'), '/linkedServices/AzureBatchLinkedService')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/BatchStorageLinkedService')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2017-09-01-preview",
+            "properties": {
+                "type": "AzureStorage",
+                "typeProperties": {
+                    "connectionString": {
+                        "type": "SecureString",
+                        "value": "[parameters('BatchStorageLinkedService_connectionString')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/AzureBatchLinkedService')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2017-09-01-preview",
+            "properties": {
+                "type": "AzureBatch",
+                "typeProperties": {
+                    "accountName": "adfdemotranslate",
+                    "accessKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('AzureBatchLinkedService_accessKey')]"
+                    },
+                    "batchUri": "https://adfdemotranslate.centralus.batch.azure.com",
+                    "poolName": "adfdemotranslate",
+                    "linkedServiceName": {
+                        "referenceName": "AzureBlobStorageLinkedService",
+                        "type": "LinkedServiceReference"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/AzureBlobStorageLinkedService')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2017-09-01-preview",
+            "properties": {
+                "type": "AzureStorage",
+                "typeProperties": {
+                    "connectionString": {
+                        "type": "SecureString",
+                        "value": "[parameters('AzureBlobStorageLinkedService_connectionString')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        }
+    ]
+}

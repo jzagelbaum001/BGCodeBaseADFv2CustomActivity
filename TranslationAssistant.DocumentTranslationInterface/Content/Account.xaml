@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="TranslationAssistant.DocumentTranslationInterface.Content.Account"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:viewModel="clr-namespace:TranslationAssistant.DocumentTranslationInterface.ViewModel"
+             mc:Ignorable="d"
+             d:DesignHeight="356" d:DesignWidth="475">
+    <UserControl.DataContext>
+        <viewModel:AccountViewModel/>
+    </UserControl.DataContext>
+
+    <Grid>
+        <ScrollViewer Margin="0,0,0,-32">
+            <StackPanel x:Name="Panel" MinWidth="200">
+                <TextBlock Text="Account" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
+
+                <TextBlock Height="20"/>
+                <TextBlock TextWrapping="Wrap" Text="Please subscribe to Microsoft Translator Text API at" />
+                <TextBlock TextWrapping="Wrap">
+                    <Hyperlink NavigateUri="https://www.microsoft.com/en-us/translator/getstarted.aspx" ToolTip="Subscribe to Microsoft Translator"  RequestNavigate="Hyperlink_OnRequestNavigate">
+                    <Run Text="https://www.microsoft.com/en-us/translator/getstarted.aspx," />
+                    </Hyperlink>
+                </TextBlock>
+                
+                <TextBlock TextWrapping="Wrap" Text="and copy the Key for your Translator Text API resource into the field below." />
+
+                <TextBlock Height="20" />
+                <TextBlock TextWrapping="Wrap" Text="Optionally you may enter a category identifier to use a customized machine translation system. The standard categories you can use are &quot;general&quot;(same as blank), &quot;tech&quot; for computer-related technical content, &quot;speech&quot; for translation of conversational speech, or the category ID of a custom system you have built on " />
+                <TextBlock>
+                    <Hyperlink NavigateUri="https://hub.microsofttranslator.com" ToolTip="Build a customized machine translation system here." RequestNavigate="Hyperlink_OnRequestNavigate">
+                    <Run Text="https://hub.microsofttranslator.com."/>
+                    </Hyperlink>
+                </TextBlock>
+
+                <Grid HorizontalAlignment="Left" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="320" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Key:" VerticalAlignment="Center" Margin="0,3,16,0" />
+                    <PasswordBox Name="KeyBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin ="0,3,0,0" PasswordChanged="PasswordBox_PasswordChanged"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Category:" VerticalAlignment="Center" Margin="0,3,16,0"  />
+                    <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin ="0,3,0,0"  Text="{Binding CategoryID, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Button Grid.Row="4" Grid.Column="1" Content="Save" Width="80" HorizontalAlignment="Left" Margin="0,20,0,0">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseUp">
+                                <i:InvokeCommandAction
+                                        Command="{Binding SaveAccountSettingsClickCommand}" />
+
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    
+                </Grid>
+
+                <StackPanel VerticalAlignment="Bottom" Background="White" Margin="0,20,0,0">
+                    <StatusBar Background="{x:Null}">
+                        <TextBlock TextWrapping="Wrap" Text="{Binding StatusText}" />
+                    </StatusBar>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

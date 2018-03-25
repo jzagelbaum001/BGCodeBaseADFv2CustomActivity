@@ -1,0 +1,29 @@
+﻿<mui:ModernWindow x:Class="TranslationAssistant.DocumentTranslationInterface.MainWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+                  xmlns:viewModel="clr-namespace:TranslationAssistant.DocumentTranslationInterface.ViewModel"
+                  Title="Document Translator"
+                  ContentSource="/Pages/Home.xaml" Background="Black" ResizeMode="NoResize"
+                  >
+
+
+    <mui:ModernWindow.DataContext>
+    <viewModel:MainWindowViewModel />
+    </mui:ModernWindow.DataContext>
+
+    <mui:ModernWindow.MenuLinkGroups>
+        <mui:LinkGroup DisplayName="Document Translator">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="Home" Source="/Pages/Home.xaml" />
+                <mui:Link DisplayName="Translate Documents" Source="/Pages/DocumentTranslationPage.xaml" />
+                <mui:Link DisplayName="Settings" Source="/Pages/Settings.xaml" />
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+    </mui:ModernWindow.MenuLinkGroups>
+
+    <!--
+    <mui:ModernWindow.TitleLinks>
+    </mui:ModernWindow.TitleLinks>
+    -->
+</mui:ModernWindow>
